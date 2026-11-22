@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OS Scheduling Visualizer</title>
+
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+    <div class="brand">
+        <span class="brand-icon">OS</span>
+        <div>
+            <h1>Scheduling Visualizer</h1>
+            <p>Operating Systems - Interactive Learning Tool</p>
+        </div>
+    </div>
+    <span class="status">ASSIGNMENT 2</span>
+</header>
+
+<main class="container">
+
+    <section class="hero">
+        <div>
+            <p class="eyebrow">OPERATING SYSTEMS LAB</p>
+            <h2>See how scheduling works.</h2>
+            <p>Explore disk and CPU scheduling algorithms with step-by-step visualizations, metrics and comparisons.</p>
+        </div>
+        <div class="hero-mark">↗</div>
+    </section>
+
+    <nav class="tabs">
+        <button class="tab active" data-tab="disk">Disk Scheduling</button>
+        <button class="tab" data-tab="cpu">CPU Scheduling</button>
+    </nav>
+
+    <!-- DISK SCHEDULING -->
+
+    <section id="disk-section" class="panel">
+
+        <div class="section-heading">
+            <p class="eyebrow">PART A - COMPULSORY</p>
+            <h2>Disk Scheduling</h2>
+            <p>Choose an algorithm and follow the disk head as it services requests.</p>
+        </div>
+
+        <div class="card">
+            <h3>Disk Input</h3>
+
+            <div class="form-grid">
+
+                <label>Disk Size
+                    <input id="diskSize" type="number" min="2" value="200">
+                </label>
+
+                <label>Initial Head Position
+                    <input id="head" type="number" min="0" value="50">
+                </label>
+
+                <label class="wide">Request Queue
+                    <input id="requests" type="text"
+                    value="82, 170, 43, 140, 24, 16, 190">
+                </label>
+
+                <label>Direction
+                    <select id="direction">
+                        <option>Right</option>
+                        <option>Left</option>
+                    </select>
+                </label>
+
+                <label>Algorithm
+                    <select id="diskAlgorithm">
+                        <option>FCFS</option>
+                        <option>SSTF</option>
+                        <option>SCAN</option>
+                        <option>C-SCAN</option>
+                        <option>LOOK</option>
+                    </select>
+                </label>
+
+            </div>
+
+            <div class="actions">
+                <button id="runDisk" class="primary">Run Algorithm</button>
+                <button id="compareDisk" class="secondary">Compare All</button>
+                <button id="sampleDisk" class="ghost">Reset Sample</button>
+            </div>
+
+            <p id="diskError" class="error"></p>
+        </div>
+
+        <div class="stats">
+            <article class="stat">
+                <span>Selected Algorithm</span>
+                <strong id="diskStatAlgorithm">-</strong>
+            </article>
+
+            <article class="stat">
+                <span>Total Head Movement</span>
+                <strong id="diskTotal">-</strong>
+            </article>
+
+            <article class="stat">
+                <span>Requests Serviced</span>
+                <strong id="diskCount">-</strong>
+            </article>
+        </div>
+
+        <div class="card">
+            <h3>Seek Graph</h3>
+            <p class="muted">Cylinder number against movement step</p>
+
+            <canvas id="diskChart" height="110"></canvas>
+
+            <div class="player">
+                <button id="diskPrev" class="secondary">Previous</button>
+                <button id="diskNext" class="secondary">Next</button>
+                <button id="diskPlay" class="primary">Auto-play</button>
+                <button id="diskStop" class="ghost">Stop</button>
+            </div>
+
+            <div class="sequence">
+                <strong>Service Sequence:</strong>
+                <span id="serviceSequence">Run an algorithm to see the order.</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Head Movement Comparison</h3>
+            <canvas id="compareChart" height="100"></canvas>
+            <div id="comparisonValues" class="comparison-values"></div>
+        </div>
+
+    </section>
+
+    <!-- CPU SCHEDULING -->
+
+    <section id="cpu-section" class="panel hidden">
+
+        <div class="section-heading">
+            <p class="eyebrow">PART B</p>
+            <h2>CPU Scheduling</h2>
+            <p>Visualize process execution and calculate waiting and turnaround times.</p>
+        </div>
+
+        <div class="card">
+            <h3>Process Input</h3>
+
+            <p class="muted">
+                Enter PID, Arrival Time, Burst Time and Priority.
+            </p>
+
+            <label class="process-label">Processes
+                <textarea id="processes" rows="5">P1, 0, 5, 2
+P2, 1, 3, 1
+P3, 2, 8, 3
+P4, 3, 6, 2</textarea>
+            </label>
+
+            <div class="form-grid cpu-options">
+
+                <label>CPU Algorithm
+                    <select id="cpuAlgorithm">
+                        <option>FCFS</option>
+                        <option>Round Robin</option>
+                    </select>
+                </label>
+
+                <label>Time Quantum
+                    <input id="quantum" type="number" min="1" value="2">
+                </label>
+
+            </div>
+
+            <div class="actions">
+                <button id="runCpu" class="primary">
+                    Run CPU Scheduling
+                </button>
+            </div>
+
+            <p id="cpuError" class="error"></p>
+        </div>
+
+        <div class="stats">
+            <article class="stat">
+                <span>Average Waiting Time</span>
+                <strong id="avgWaiting">-</strong>
+            </article>
+
+            <article class="stat">
+                <span>Average Turnaround Time</span>
+                <strong id="avgTurnaround">-</strong>
+            </article>
+
+            <article class="stat">
+                <span>Processes</span>
+                <strong id="processCount">-</strong>
+            </article>
+        </div>
+
+        <div class="card">
+            <h3>Gantt Chart</h3>
+
+            <div id="gantt" class="gantt">
+                <p class="muted">Run CPU scheduling to display the Gantt chart.</p>
+            </div>
+
+            <div class="player">
+                <button id="cpuPrev" class="secondary">Previous</button>
+                <button id="cpuNext" class="secondary">Next</button>
+                <button id="cpuPlay" class="primary">Auto-play</button>
+                <button id="cpuStop" class="ghost">Stop</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Process Performance</h3>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Process</th>
+                            <th>Arrival</th>
+                            <th>Burst</th>
+                            <th>Completion</th>
+                            <th>Waiting</th>
+                            <th>Turnaround</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="metricsBody">
+                        <tr>
+                            <td colspan="6">No results yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </section>
+
+    <footer>
+        OS Scheduling Visualizer - HTML, CSS and JavaScript
+    </footer>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
